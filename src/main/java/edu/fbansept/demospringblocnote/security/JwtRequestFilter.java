@@ -30,8 +30,13 @@ public class JwtRequestFilter extends OncePerRequestFilter {
     @Override
     protected boolean shouldNotFilter(HttpServletRequest request) throws ServletException {
         return request.getRequestURI().startsWith("/test/")
+                || request.getRequestURI().equals("/demo/test")
                 || request.getRequestURI().equals("/authentification")
-                || request.getRequestURI().equals("/inscription");
+                || request.getRequestURI().equals("/demo/authentification")
+                || request.getRequestURI().equals("/inscription")
+                || request.getRequestURI().equals("/demo/inscription");
+
+
     }
 
     @Override
