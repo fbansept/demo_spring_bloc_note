@@ -44,6 +44,11 @@ public class UtilisateurController {
         this.passwordEncoder = passwordEncoder;
     }
 
+    @PostMapping("/demo/authentification")
+    public String authentificationTest(@RequestBody Utilisateur utilisateur) throws Exception {
+        return "oups";
+    }
+
     @PostMapping("/authentification")
     public ResponseEntity<String> authentification(@RequestBody Utilisateur utilisateur) throws Exception {
 
