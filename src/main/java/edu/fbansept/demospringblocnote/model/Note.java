@@ -14,7 +14,7 @@ public class Note {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @JsonView({CustomJsonView.VueUtilisateur.class,CustomJsonView.VueNote.class})
-    private int id;
+    private Integer id;
 
     @JsonView({CustomJsonView.VueUtilisateur.class,CustomJsonView.VueNote.class})
     private String titre;
@@ -23,11 +23,11 @@ public class Note {
     @ManyToOne
     Utilisateur editeur;
 
-    public int getId() {
+    public Integer getId() {
         return id;
     }
 
-    public void setId(int id) {
+    public void setId(Integer id) {
         this.id = id;
     }
 

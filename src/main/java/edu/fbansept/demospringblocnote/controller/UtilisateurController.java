@@ -5,6 +5,7 @@ import edu.fbansept.demospringblocnote.dao.UtilisateurDao;
 import edu.fbansept.demospringblocnote.model.Role;
 import edu.fbansept.demospringblocnote.model.Utilisateur;
 import edu.fbansept.demospringblocnote.security.JwtUtil;
+import edu.fbansept.demospringblocnote.security.UserDetailsCustom;
 import edu.fbansept.demospringblocnote.security.UserDetailsServiceCustom;
 import edu.fbansept.demospringblocnote.view.CustomJsonView;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -12,11 +13,11 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.AuthenticationException;
-import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.web.bind.annotation.*;
 
-import java.util.*;
+import java.util.List;
+import java.util.Optional;
 
 @RestController
 @CrossOrigin
@@ -56,7 +57,7 @@ public class UtilisateurController {
             return ResponseEntity.badRequest().body("Mauvais pseudo / mot de passe");
         }
 
-        UserDetails userDetails = this.userDetailsServiceCustom.loadUserByUsername(utilisateur.getPseudo());
+        UserDetailsCustom userDetails = this.userDetailsServiceCustom.loadUserByUsername(utilisateur.getPseudo());
 
         return ResponseEntity.ok(jwtUtil.generateToken(userDetails));
     }
@@ -99,7 +100,7 @@ public class UtilisateurController {
     }
 
     @JsonView(CustomJsonView.VueUtilisateur.class)
-    @GetMapping("/user/utilisateur")
+    @GetMapping("/user/utilisateur-connecte")
     public ResponseEntity<Utilisateur> getInformationUtilisateurConnecte(
             @RequestHeader(value="Authorization") String authorization){
         //la valeur du champs authorization est extrait de l'entête de la requête

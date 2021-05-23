@@ -4,7 +4,7 @@ public class CustomJsonView {
 
     public static class VueUtilisateur {};
 
-    public class VueNote {
+    public static class VueNote {
     }
 
 }

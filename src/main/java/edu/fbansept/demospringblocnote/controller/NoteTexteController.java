@@ -4,7 +4,10 @@ import com.fasterxml.jackson.annotation.JsonView;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import edu.fbansept.demospringblocnote.dao.NoteTexteDao;
+import edu.fbansept.demospringblocnote.dao.UtilisateurDao;
 import edu.fbansept.demospringblocnote.model.NoteTexte;
+import edu.fbansept.demospringblocnote.model.Utilisateur;
+import edu.fbansept.demospringblocnote.security.JwtUtil;
 import edu.fbansept.demospringblocnote.view.CustomJsonView;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
@@ -12,18 +15,24 @@ import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 
 import java.net.URI;
-import java.util.List;
 import java.util.Optional;
 
 @RestController
 @CrossOrigin
 public class NoteTexteController {
 
-    NoteTexteDao noteTexteDao;
+    private NoteTexteDao noteTexteDao;
+    private UtilisateurDao utilisateurDao;
+    private JwtUtil jwtUtil;
 
     @Autowired
-    NoteTexteController(NoteTexteDao noteTexteDao){
+    NoteTexteController(
+            NoteTexteDao noteTexteDao,
+            UtilisateurDao utilisateurDao,
+            JwtUtil jwtUtil){
         this.noteTexteDao = noteTexteDao;
+        this.utilisateurDao = utilisateurDao;
+        this.jwtUtil = jwtUtil;
     }
 
 
@@ -47,12 +56,36 @@ public class NoteTexteController {
     }
 
     @PostMapping("/user/noteTexte")
-    public ResponseEntity<String> addNoteTexte (@RequestBody NoteTexte noteTexte) {
+    public ResponseEntity<String> addNoteTexte (
+            @RequestBody NoteTexte noteTexte,
+            @RequestHeader(value="Authorization") String authorization) {
 
-        noteTexte = noteTexteDao.saveAndFlush(noteTexte);
-        return ResponseEntity.created(
-                URI.create("/user/noteTexte/" + noteTexte.getId())
-        ).build();
+        String token = authorization.substring(7);
+        Integer idUtilisateur = jwtUtil.getTokenBody(token).get("id",Integer.class);
+
+        if(noteTexte.getId() == null) {
+            noteTexte.setEditeur(new Utilisateur(idUtilisateur));
+            noteTexte = noteTexteDao.saveAndFlush(noteTexte);
+
+            return ResponseEntity.created(
+                    URI.create("/user/noteTexte/" + noteTexte.getId())
+            ).build();
+        } else {
+            Optional<NoteTexte> noteTexteBdd = noteTexteDao.findById(noteTexte.getId());
+
+            if (noteTexteBdd.isPresent()){
+                if(noteTexteBdd.get().getEditeur().getId() == idUtilisateur) {
+                    noteTexteBdd.get().setTitre(noteTexte.getTitre());
+                    noteTexteBdd.get().setTexte(noteTexte.getTexte());
+                    noteTexteDao.save(noteTexteBdd.get());
+                    return ResponseEntity.ok().build();
+                } else {
+                    return ResponseEntity.badRequest().body("Vous n'avez pas les droits pour modifier cette note");
+                }
+            } else {
+                return ResponseEntity.badRequest().body("Cette note n'existe pas ou a été supprimée");
+            }
+        }
     }
 
     @PostMapping("/user/noteTexte-avec-fichier")

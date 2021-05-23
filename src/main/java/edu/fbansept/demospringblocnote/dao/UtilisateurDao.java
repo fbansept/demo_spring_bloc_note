@@ -13,7 +13,10 @@ public interface UtilisateurDao extends JpaRepository<Utilisateur, Integer> {
     @Query("FROM Utilisateur u JOIN FETCH u.listeRole WHERE pseudo = :pseudo")
     Optional<Utilisateur> trouverParPseusoAvecRoles(@Param("pseudo") String pseudo);
 
-    @Query("FROM Utilisateur u JOIN FETCH u.listeNote n WHERE pseudo = :pseudo ORDER BY n.id DESC")
+    @Query( "FROM Utilisateur u " +
+            "JOIN FETCH u.listeNote n " +
+            "WHERE pseudo = :pseudo " +
+            "ORDER BY n.id DESC")
     Optional<Utilisateur> trouverParPseudo(@Param("pseudo") String pseudo);
 
 }

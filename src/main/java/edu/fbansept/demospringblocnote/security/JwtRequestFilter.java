@@ -12,9 +12,7 @@ import org.springframework.web.filter.OncePerRequestFilter;
 import javax.servlet.FilterChain;
 import javax.servlet.ServletException;
 import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpServletRequestWrapper;
 import javax.servlet.http.HttpServletResponse;
-import javax.servlet.http.HttpServletResponseWrapper;
 import java.io.IOException;
 
 @Component
@@ -34,11 +32,6 @@ public class JwtRequestFilter extends OncePerRequestFilter {
         return request.getRequestURI().startsWith("/test/")
                 || request.getRequestURI().equals("/authentification")
                 || request.getRequestURI().equals("/inscription");
-    }
-
-    @Override
-    protected void doFilterNestedErrorDispatch(HttpServletRequest request, HttpServletResponse response, FilterChain filterChain) throws ServletException, IOException {
-        super.doFilterNestedErrorDispatch(request, response, filterChain);
     }
 
     @Override

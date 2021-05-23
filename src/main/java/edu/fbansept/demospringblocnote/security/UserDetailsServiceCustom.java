@@ -1,11 +1,10 @@
 package edu.fbansept.demospringblocnote.security;
 
+import edu.fbansept.demospringblocnote.dao.UtilisateurDao;
 import edu.fbansept.demospringblocnote.model.Utilisateur;
-import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.stereotype.Service;
-import edu.fbansept.demospringblocnote.dao.UtilisateurDao;
 
 
 @Service
@@ -18,7 +17,7 @@ public class UserDetailsServiceCustom implements UserDetailsService {
     }
 
     @Override
-    public UserDetails loadUserByUsername(String pseudoSaisi) throws UsernameNotFoundException {
+    public UserDetailsCustom loadUserByUsername(String pseudoSaisi) throws UsernameNotFoundException {
 
         Utilisateur utilisateur = utilisateurDao
                 .trouverParPseusoAvecRoles(pseudoSaisi)

@@ -12,12 +12,14 @@ import java.util.List;
 
 public class UserDetailsCustom implements UserDetails {
 
+    private int id;
     private String username;
     private String password;
     private boolean active;
     private List<GrantedAuthority> authorities;
 
     public UserDetailsCustom(Utilisateur utilisateur) {
+        this.id = utilisateur.getId();
         this.username = utilisateur.getPseudo();
         this.password = utilisateur.getMotDePasse();
         this.active = true;
@@ -63,5 +65,13 @@ public class UserDetailsCustom implements UserDetails {
     @Override
     public boolean isEnabled() {
         return true;
+    }
+
+    public int getId() {
+        return id;
+    }
+
+    public void setId(int id) {
+        this.id = id;
     }
 }

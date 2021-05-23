@@ -8,6 +8,8 @@ import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.stereotype.Service;
 
 import java.util.Date;
+import java.util.HashMap;
+import java.util.Map;
 
 @Service
 public class JwtUtil {
@@ -23,9 +25,14 @@ public class JwtUtil {
                 .getBody();
     }
 
-    public String generateToken(UserDetails userDetails) {
+    public String generateToken(UserDetailsCustom userDetails) {
+
+        Map<String, Object> extra = new HashMap<>();
+        extra.put("id",userDetails.getId());
+
         return Jwts.builder()
                 .setSubject(userDetails.getUsername())
+                .addClaims(extra)
                 .setIssuedAt(new Date(System.currentTimeMillis()))
                 .setExpiration(new Date(System.currentTimeMillis() + 1000 * 60 * 60 * 12))
                 .signWith(SignatureAlgorithm.HS256, secret)
