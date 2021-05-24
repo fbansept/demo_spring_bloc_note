@@ -92,7 +92,7 @@
 			</dependencies>
 
 			<properties>
-				<!--_______ utilisée à la fin du pom (<packaging>${packaging.type}</packaging>) _______- -->
+				<!--_______ utilisee a la fin du pom (<packaging>${packaging.type}</packaging>) _______- -->
 				<packaging.type>jar</packaging.type>
 
 				<server_port>8080</server_port>
@@ -113,7 +113,7 @@
 			<id>prod</id>
 			<!-- dans le cas d'un serveur tomcat externe, on indique que l'on a besoin des classes de tomcat pour -->
 			<!-- que l'application fonctionne, mais que c'est le conteneur lui même qui les fournira, il est donc -->
-			<!-- inutile qu'elle soient ajoutée dans WEB-INF/lib -->
+			<!-- inutile qu'elles soient ajoutees dans WEB-INF/lib -->
 			<dependencies>
 				<!-- On exclue donc la librairie "spring-boot-starter-tomcat" incluse dans "spring-boot-starter-web" -->
 				<dependency>
@@ -136,7 +136,7 @@
 
 			<properties>
 
-				<!--_______ utilisée à la fin du pom (<packaging>${packaging.type}</packaging>) _______- -->
+				<!--_______ utilisee a la fin du pom (<packaging>${packaging.type}</packaging>) _______- -->
 				<packaging.type>war</packaging.type>
 
 				<!-- inutile-->
@@ -160,7 +160,7 @@
 
 	</profiles>
 
-	<!--_______ le type de package dépend du profil _______- -->
+	<!--_______ le type de package depend du profil _______- -->
 	<packaging>${packaging.type}</packaging>
 
 </project>
