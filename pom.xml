@@ -81,6 +81,9 @@
 				<artifactId>spring-boot-maven-plugin</artifactId>
 			</plugin>
 
+			<!-- fixe le probleme introduit dans la version 3.2.0 de maven-resources-plugin -->
+			<!-- Caused by: java.nio.charset.MalformedInputException: Input length = 1 -->
+			<!-- A retirer lors du futur fix dans Spring boot -->
 			<plugin>
 				<groupId>org.apache.maven.plugins</groupId>
 				<artifactId>maven-resources-plugin</artifactId>
