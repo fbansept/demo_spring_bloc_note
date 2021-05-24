@@ -30,10 +30,12 @@ public class JwtRequestFilter extends OncePerRequestFilter {
     @Override
     protected boolean shouldNotFilter(HttpServletRequest request) throws ServletException {
         return request.getRequestURI().startsWith("/test/")
-                || request.getRequestURI().equals("/demo/test")
                 || request.getRequestURI().equals("/authentification")
-                || request.getRequestURI().equals("/demo/authentification")
                 || request.getRequestURI().equals("/inscription")
+
+                //TODO faire en sorte de ne pas avoir à préfixer l'URL par le nom de l'application
+                || request.getRequestURI().equals("/demo/test")
+                || request.getRequestURI().equals("/demo/authentification")
                 || request.getRequestURI().equals("/demo/inscription");
 
 

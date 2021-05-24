@@ -46,18 +46,18 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
 
                 .and().csrf().disable()
                 .authorizeRequests()
-                
+
                     .antMatchers("/test/**").permitAll()
                     .antMatchers("/authentification").permitAll()
                     .antMatchers("/inscription").permitAll()
                     .antMatchers("/admin/**").hasRole("ADMINISTRATEUR")
                     .antMatchers("/user/**").hasAnyRole("ADMINISTRATEUR","UTILISATEUR")
 
-                    .antMatchers("/demo/test/**").permitAll()
+                    /*.antMatchers("/demo/test/**").permitAll()
                     .antMatchers("/demo/authentification").permitAll()
                     .antMatchers("/demo/inscription").permitAll()
                     .antMatchers("/demo/admin/**").hasRole("ADMINISTRATEUR")
-                    .antMatchers("/demo/user/**").hasAnyRole("ADMINISTRATEUR","UTILISATEUR")
+                    .antMatchers("/demo/user/**").hasAnyRole("ADMINISTRATEUR","UTILISATEUR")*/
                     .anyRequest().authenticated()
                 .and().exceptionHandling()
                 .and().sessionManagement().sessionCreationPolicy(SessionCreationPolicy.STATELESS)
