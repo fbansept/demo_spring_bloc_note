@@ -137,16 +137,18 @@
 				<!--_______ utilisée à la fin du pom (<packaging>${packaging.type}</packaging>) _______- -->
 				<packaging.type>war</packaging.type>
 
+				<!-- inutile-->
+				<server_port>8080</server_port>
 				<database_host>172.18.0.2</database_host>
 				<database_port>3306</database_port>
 				<database_name>demo_spring_bloc_note</database_name>
-				<!--_______ ___________________________________________________________________________- -->
+				<!--_______ ___________________________________________________________________________  -->
 				<!-- _______Ces informations devraient se situer dans le fichier .m2/settings.xml________-->
 				<!-- _____Ou tout autre moyen pour qu'elles n'apparaissent pas en clair sur le repo _____-->
 				<database_username>root</database_username>
 				<database_password>root</database_password>
 				<jwt_secret>azerty123</jwt_secret>
-				<!-- __________________________________________________________________________________- -->
+				<!-- __________________________________________________________________________________  -->
 				<database_initialization_mode>NEVER</database_initialization_mode>
 				<database_ddl_initialization>false</database_ddl_initialization>
 				<database_ddl_initialization_mode>none</database_ddl_initialization_mode>
