@@ -30,13 +30,10 @@ public class JwtRequestFilter extends OncePerRequestFilter {
     @Override
     protected boolean shouldNotFilter(HttpServletRequest request) throws ServletException {
 
-        System.out.println(request.getRequestURI());
-        System.out.println(request.getPathInfo());
-        System.out.println(request.getContextPath());
-        System.out.println(request.getRequestURL());
-        System.out.println(request.getServletPath());
-        System.out.println(request.getServletContext().getContextPath());
-        System.out.println(request.getRequestURI());
+        //Attention à bien utiliser getServletPath() et non getRequestURI()
+        //le premier exclu le nom du servlet mis en place (nom de la webapp sur tomcat)
+        //Cela marcherait sur un tomcat intégré mais pas sur un tomcat externe (en production)
+        //car getRequestURI() ajouterai le nom de la webapp, ex : /demo/authentification.
 
         return request.getServletPath().startsWith("/test")
                 || request.getServletPath().equals("/authentification")
