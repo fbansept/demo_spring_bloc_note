@@ -16,8 +16,7 @@ import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 
 import java.net.URI;
-import java.util.Arrays;
-import java.util.List;
+import java.util.ArrayList;
 import java.util.Optional;
 
 @RestController
@@ -65,7 +64,7 @@ public class NoteTexteController {
 
         String token = authorization.substring(7);
         Integer idUtilisateur = jwtUtil.getTokenBody(token).get("id",Integer.class);
-        List<String> listeNomRole = Arrays.asList(jwtUtil.getTokenBody(token).get("roles", String[].class));
+        ArrayList<String> listeNomRole = (ArrayList<String>)jwtUtil.getTokenBody(token).get("roles", ArrayList.class);
 
         //---si l'id de l'utilisateur n'a pas été rajouté dans le token---
         //Utilisateur user = utilisateurDao.trouverParPseudo(jwtUtil.getTokenBody(token).getSubject()).get();
