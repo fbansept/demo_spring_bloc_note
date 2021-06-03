@@ -10,6 +10,7 @@ import org.springframework.stereotype.Service;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.Map;
+import java.util.stream.Collectors;
 
 @Service
 public class JwtUtil {
@@ -29,6 +30,13 @@ public class JwtUtil {
 
         Map<String, Object> extra = new HashMap<>();
         extra.put("id",userDetails.getId());
+
+        Object[] listeRole = userDetails.getAuthorities().stream()
+                .map(ga -> ga.toString())
+                .collect(Collectors.toList())
+                .toArray();
+
+        extra.put("roles",listeRole);
 
         return Jwts.builder()
                 .setSubject(userDetails.getUsername())

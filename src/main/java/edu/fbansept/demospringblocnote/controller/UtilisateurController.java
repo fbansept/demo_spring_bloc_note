@@ -7,7 +7,7 @@ import edu.fbansept.demospringblocnote.model.Utilisateur;
 import edu.fbansept.demospringblocnote.security.JwtUtil;
 import edu.fbansept.demospringblocnote.security.UserDetailsCustom;
 import edu.fbansept.demospringblocnote.security.UserDetailsServiceCustom;
-import edu.fbansept.demospringblocnote.view.CustomJsonView;
+import edu.fbansept.demospringblocnote.view.VueUtilisateur;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.authentication.AuthenticationManager;
@@ -42,11 +42,6 @@ public class UtilisateurController {
         this.authenticationManager = authenticationManager;
         this.userDetailsServiceCustom = userDetailsServiceCustom;
         this.passwordEncoder = passwordEncoder;
-    }
-
-    @PostMapping("/demo/authentification")
-    public String authentificationTest(@RequestBody Utilisateur utilisateur) throws Exception {
-        return "oups";
     }
 
     @PostMapping("/authentification")
@@ -104,7 +99,7 @@ public class UtilisateurController {
         return ResponseEntity.notFound().build();
     }
 
-    @JsonView(CustomJsonView.VueUtilisateur.class)
+    @JsonView(VueUtilisateur.Standard.class)
     @GetMapping("/user/utilisateur-connecte")
     public ResponseEntity<Utilisateur> getInformationUtilisateurConnecte(
             @RequestHeader(value="Authorization") String authorization){
@@ -125,7 +120,7 @@ public class UtilisateurController {
         return ResponseEntity.notFound().build();
     }
 
-    @JsonView(CustomJsonView.VueUtilisateur.class)
+    @JsonView(VueUtilisateur.Standard.class)
     @GetMapping("/admin/utilisateur/{id}")
     public ResponseEntity<Utilisateur> getUtilisateur(@PathVariable int id) {
 
@@ -138,7 +133,7 @@ public class UtilisateurController {
         }
     }
 
-    @JsonView(CustomJsonView.VueUtilisateur.class)
+    @JsonView(VueUtilisateur.Standard.class)
     @GetMapping("/admin/utilisateurs")
     public ResponseEntity<List<Utilisateur>> getUtilisateurs () {
 

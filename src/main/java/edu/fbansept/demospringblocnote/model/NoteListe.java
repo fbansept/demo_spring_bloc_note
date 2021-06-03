@@ -1,7 +1,7 @@
 package edu.fbansept.demospringblocnote.model;
 
 import com.fasterxml.jackson.annotation.JsonView;
-import edu.fbansept.demospringblocnote.view.CustomJsonView;
+import edu.fbansept.demospringblocnote.view.VueUtilisateur;
 import org.springframework.data.jpa.domain.support.AuditingEntityListener;
 
 import javax.persistence.*;
@@ -12,11 +12,11 @@ import java.util.Set;
 @EntityListeners(AuditingEntityListener.class)
 public class NoteListe extends Note{
 
-    @JsonView(CustomJsonView.VueUtilisateur.class)
+    @JsonView(VueUtilisateur.Standard.class)
     private boolean trierParEtat;
 
     @OneToMany(mappedBy = "note")
-    @JsonView(CustomJsonView.VueUtilisateur.class)
+    @JsonView(VueUtilisateur.Standard.class)
     Set<Tache> listeTache = new HashSet<>();
 
     public boolean isTrierParEtat() {

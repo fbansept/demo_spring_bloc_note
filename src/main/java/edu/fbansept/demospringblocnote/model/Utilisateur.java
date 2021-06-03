@@ -1,7 +1,7 @@
 package edu.fbansept.demospringblocnote.model;
 
 import com.fasterxml.jackson.annotation.JsonView;
-import edu.fbansept.demospringblocnote.view.CustomJsonView;
+import edu.fbansept.demospringblocnote.view.VueUtilisateur;
 import org.springframework.data.jpa.domain.support.AuditingEntityListener;
 
 import javax.persistence.*;
@@ -18,30 +18,35 @@ public class Utilisateur {
 
     public Utilisateur(Integer id) {
         this.id = id;
+
     }
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    @JsonView(CustomJsonView.VueUtilisateur.class)
+    @JsonView(VueUtilisateur.Standard.class)
     private int id;
 
     @Column(nullable = false, length = 50)
-    @JsonView(CustomJsonView.VueUtilisateur.class)
+    @JsonView(VueUtilisateur.Standard.class)
     private String pseudo;
 
     private String motDePasse;
 
-    @JsonView(CustomJsonView.VueUtilisateur.class)
+    @JsonView(VueUtilisateur.Standard.class)
     @OneToMany(mappedBy = "editeur")
     private List<Note> listeNote;
 
     @ManyToMany
-    @JsonView({CustomJsonView.VueUtilisateur.class})
+    @JsonView({VueUtilisateur.Standard.class})
     @JoinTable(
             name = "utilisateur_role",
             joinColumns = @JoinColumn(name = "utilisateur_id", referencedColumnName = "id"),
             inverseJoinColumns = @JoinColumn(name = "role_id", referencedColumnName = "id"))
     private Set<Role> listeRole = new HashSet<>();
+
+    @OneToMany(mappedBy = "utilisateur")
+    @JsonView({VueUtilisateur.AvecHistorique.class})
+    private Set<Historique> listeHistorique = new HashSet<>();
 
     public int getId() {
         return id;

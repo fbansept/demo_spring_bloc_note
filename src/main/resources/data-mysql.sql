@@ -42,3 +42,6 @@ INSERT INTO `tache` (`id`, `termine`, `texte`, `note_id`) VALUES
 INSERT INTO `utilisateur_role` (`utilisateur_id`, `role_id`) VALUES
 (1, 1),
 (2, 2);
+
+INSERT INTO `historique` (`date`, `note_id`, `utilisateur_id`, `action`) VALUES
+('2021-05-04 00:00:00', '1', '1', 'Ajout de la note');

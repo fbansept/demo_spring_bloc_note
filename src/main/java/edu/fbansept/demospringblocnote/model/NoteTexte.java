@@ -1,7 +1,7 @@
 package edu.fbansept.demospringblocnote.model;
 
 import com.fasterxml.jackson.annotation.JsonView;
-import edu.fbansept.demospringblocnote.view.CustomJsonView;
+import edu.fbansept.demospringblocnote.view.VueUtilisateur;
 import org.springframework.data.jpa.domain.support.AuditingEntityListener;
 
 import javax.persistence.*;
@@ -10,11 +10,11 @@ import javax.persistence.*;
 @EntityListeners(AuditingEntityListener.class)
 public class NoteTexte extends Note{
 
-    @JsonView(CustomJsonView.VueUtilisateur.class)
+    @JsonView(VueUtilisateur.Standard.class)
     @Column(columnDefinition = "TEXT")
     private String texte;
 
-    @JsonView(CustomJsonView.VueUtilisateur.class)
+    @JsonView(VueUtilisateur.Standard.class)
     private String url;
 
     public String getTexte() {

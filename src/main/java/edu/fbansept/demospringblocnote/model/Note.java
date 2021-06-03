@@ -1,7 +1,9 @@
 package edu.fbansept.demospringblocnote.model;
 
 import com.fasterxml.jackson.annotation.JsonView;
-import edu.fbansept.demospringblocnote.view.CustomJsonView;
+import edu.fbansept.demospringblocnote.view.VueHistorique;
+import edu.fbansept.demospringblocnote.view.VueNote;
+import edu.fbansept.demospringblocnote.view.VueUtilisateur;
 import org.springframework.data.jpa.domain.support.AuditingEntityListener;
 
 import javax.persistence.*;
@@ -13,13 +15,13 @@ public class Note {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    @JsonView({CustomJsonView.VueUtilisateur.class,CustomJsonView.VueNote.class})
+    @JsonView({VueUtilisateur.Standard.class, VueNote.Standard.class})
     private Integer id;
 
-    @JsonView({CustomJsonView.VueUtilisateur.class,CustomJsonView.VueNote.class})
+    @JsonView({VueUtilisateur.Standard.class, VueNote.Standard.class, VueHistorique.Standard.class})
     private String titre;
 
-    @JsonView(CustomJsonView.VueNote.class)
+    @JsonView(VueNote.Standard.class)
     @ManyToOne
     Utilisateur editeur;
 

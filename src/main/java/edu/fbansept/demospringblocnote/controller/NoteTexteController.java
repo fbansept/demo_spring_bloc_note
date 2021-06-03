@@ -8,13 +8,16 @@ import edu.fbansept.demospringblocnote.dao.UtilisateurDao;
 import edu.fbansept.demospringblocnote.model.NoteTexte;
 import edu.fbansept.demospringblocnote.model.Utilisateur;
 import edu.fbansept.demospringblocnote.security.JwtUtil;
-import edu.fbansept.demospringblocnote.view.CustomJsonView;
+import edu.fbansept.demospringblocnote.view.VueNote;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 
 import java.net.URI;
+import java.util.Arrays;
+import java.util.List;
 import java.util.Optional;
 
 @RestController
@@ -42,7 +45,7 @@ public class NoteTexteController {
         return ResponseEntity.badRequest().body("nope");
     }
 
-    @JsonView(CustomJsonView.VueNote.class)
+    @JsonView(VueNote.Standard.class)
     @GetMapping("/test/noteTexte/{id}")
     public ResponseEntity<NoteTexte> getNoteTexte(@PathVariable int id) {
 
@@ -62,6 +65,11 @@ public class NoteTexteController {
 
         String token = authorization.substring(7);
         Integer idUtilisateur = jwtUtil.getTokenBody(token).get("id",Integer.class);
+        List<String> listeNomRole = Arrays.asList(jwtUtil.getTokenBody(token).get("roles", String[].class));
+
+        //---si l'id de l'utilisateur n'a pas été rajouté dans le token---
+        //Utilisateur user = utilisateurDao.trouverParPseudo(jwtUtil.getTokenBody(token).getSubject()).get();
+        //user.getId()
 
         if(noteTexte.getId() == null) {
             noteTexte.setEditeur(new Utilisateur(idUtilisateur));
@@ -74,13 +82,13 @@ public class NoteTexteController {
             Optional<NoteTexte> noteTexteBdd = noteTexteDao.findById(noteTexte.getId());
 
             if (noteTexteBdd.isPresent()){
-                if(noteTexteBdd.get().getEditeur().getId() == idUtilisateur) {
+                if(noteTexteBdd.get().getEditeur().getId() == idUtilisateur || listeNomRole.contains("ROLE_ADMINISTRATEUR")) {
                     noteTexteBdd.get().setTitre(noteTexte.getTitre());
                     noteTexteBdd.get().setTexte(noteTexte.getTexte());
                     noteTexteDao.save(noteTexteBdd.get());
                     return ResponseEntity.ok().build();
                 } else {
-                    return ResponseEntity.badRequest().body("Vous n'avez pas les droits pour modifier cette note");
+                    return ResponseEntity.status(HttpStatus.FORBIDDEN).body("Vous n'avez pas les droits pour modifier cette note");
                 }
             } else {
                 return ResponseEntity.badRequest().body("Cette note n'existe pas ou a été supprimée");

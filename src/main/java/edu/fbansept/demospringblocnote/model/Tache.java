@@ -1,7 +1,7 @@
 package edu.fbansept.demospringblocnote.model;
 
 import com.fasterxml.jackson.annotation.JsonView;
-import edu.fbansept.demospringblocnote.view.CustomJsonView;
+import edu.fbansept.demospringblocnote.view.VueUtilisateur;
 import org.springframework.data.jpa.domain.support.AuditingEntityListener;
 
 import javax.persistence.*;
@@ -11,14 +11,14 @@ import javax.persistence.*;
 public class Tache {
 
     @Id
-    @JsonView(CustomJsonView.VueUtilisateur.class)
+    @JsonView(VueUtilisateur.Standard.class)
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private int id;
 
-    @JsonView(CustomJsonView.VueUtilisateur.class)
+    @JsonView(VueUtilisateur.Standard.class)
     private boolean termine;
 
-    @JsonView(CustomJsonView.VueUtilisateur.class)
+    @JsonView(VueUtilisateur.Standard.class)
     private String texte;
 
     @ManyToOne

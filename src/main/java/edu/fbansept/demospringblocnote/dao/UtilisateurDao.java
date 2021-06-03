@@ -2,6 +2,7 @@ package edu.fbansept.demospringblocnote.dao;
 
 import edu.fbansept.demospringblocnote.model.Utilisateur;
 import org.springframework.data.jpa.repository.JpaRepository;
+import org.springframework.data.jpa.repository.Modifying;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
 import org.springframework.stereotype.Repository;
@@ -18,5 +19,6 @@ public interface UtilisateurDao extends JpaRepository<Utilisateur, Integer> {
             "WHERE pseudo = :pseudo " +
             "ORDER BY n.id DESC")
     Optional<Utilisateur> trouverParPseudo(@Param("pseudo") String pseudo);
+
 
 }
