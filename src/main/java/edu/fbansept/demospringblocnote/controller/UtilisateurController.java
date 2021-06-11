@@ -7,17 +7,25 @@ import edu.fbansept.demospringblocnote.model.Utilisateur;
 import edu.fbansept.demospringblocnote.security.JwtUtil;
 import edu.fbansept.demospringblocnote.security.UserDetailsCustom;
 import edu.fbansept.demospringblocnote.security.UserDetailsServiceCustom;
+import edu.fbansept.demospringblocnote.utils.ImageService;
 import edu.fbansept.demospringblocnote.view.VueUtilisateur;
+import org.apache.commons.io.IOUtils;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.http.ResponseEntity;
+import org.springframework.http.*;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.AuthenticationException;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.web.bind.annotation.*;
 
+import java.io.File;
+import java.io.IOException;
+import java.io.InputStream;
+import java.net.URL;
+import java.util.Base64;
 import java.util.List;
 import java.util.Optional;
+import java.util.UUID;
 
 @RestController
 @CrossOrigin
@@ -28,6 +36,7 @@ public class UtilisateurController {
     private AuthenticationManager authenticationManager;
     private UserDetailsServiceCustom userDetailsServiceCustom;
     private PasswordEncoder passwordEncoder;
+    private ImageService imageService;
 
     @Autowired
     UtilisateurController(
@@ -35,13 +44,15 @@ public class UtilisateurController {
             JwtUtil jwtUtil,
             AuthenticationManager authenticationManager,
             UserDetailsServiceCustom userDetailsServiceCustom,
-            PasswordEncoder passwordEncoder
-    ){
+            PasswordEncoder passwordEncoder,
+            ImageService imageService
+    ) {
         this.utilisateurDao = utilisateurDao;
         this.jwtUtil = jwtUtil;
         this.authenticationManager = authenticationManager;
         this.userDetailsServiceCustom = userDetailsServiceCustom;
         this.passwordEncoder = passwordEncoder;
+        this.imageService = imageService;
     }
 
     @PostMapping("/authentification")
@@ -63,11 +74,11 @@ public class UtilisateurController {
     }
 
     @PostMapping("/inscription")
-    public ResponseEntity<String> inscription(@RequestBody Utilisateur utilisateur){
+    public ResponseEntity<String> inscription(@RequestBody Utilisateur utilisateur) {
 
         Optional<Utilisateur> utilisateurDoublon = utilisateurDao.trouverParPseudo(utilisateur.getPseudo());
 
-        if(utilisateurDoublon.isPresent()) {
+        if (utilisateurDoublon.isPresent()) {
             return ResponseEntity.badRequest().body("Ce pseudo est déja utilisé");
         } else {
 
@@ -85,11 +96,11 @@ public class UtilisateurController {
     }
 
     @PostMapping("/admin/utilisateur")
-    public ResponseEntity<String> updateUser(@RequestBody Utilisateur utilisateur){
+    public ResponseEntity<String> updateUser(@RequestBody Utilisateur utilisateur) {
 
         Optional<Utilisateur> utilisateurBddOptional = utilisateurDao.trouverParPseudo(utilisateur.getPseudo());
 
-        if(utilisateurBddOptional.isPresent()) {
+        if (utilisateurBddOptional.isPresent()) {
             Utilisateur utilisateurBdd = utilisateurBddOptional.get();
             utilisateur.setMotDePasse(utilisateurBdd.getMotDePasse());
             utilisateurDao.save(utilisateur);
@@ -102,7 +113,7 @@ public class UtilisateurController {
     @JsonView(VueUtilisateur.Standard.class)
     @GetMapping("/user/utilisateur-connecte")
     public ResponseEntity<Utilisateur> getInformationUtilisateurConnecte(
-            @RequestHeader(value="Authorization") String authorization){
+            @RequestHeader(value = "Authorization") String authorization) {
         //la valeur du champs authorization est extrait de l'entête de la requête
 
         //On supprime la partie "Bearer " de la valeur de l'authorization
@@ -113,7 +124,7 @@ public class UtilisateurController {
 
         Optional<Utilisateur> utilisateur = utilisateurDao.trouverParPseudo(username);
 
-        if(utilisateur.isPresent()) {
+        if (utilisateur.isPresent()) {
             return ResponseEntity.ok().body(utilisateur.get());
         }
 
@@ -126,7 +137,7 @@ public class UtilisateurController {
 
         Optional<Utilisateur> utilisateur = utilisateurDao.findById(id);
 
-        if(utilisateur.isPresent()) {
+        if (utilisateur.isPresent()) {
             return ResponseEntity.ok(utilisateur.get());
         } else {
             return ResponseEntity.noContent().build();
@@ -135,20 +146,71 @@ public class UtilisateurController {
 
     @JsonView(VueUtilisateur.Standard.class)
     @GetMapping("/admin/utilisateurs")
-    public ResponseEntity<List<Utilisateur>> getUtilisateurs () {
+    public ResponseEntity<List<Utilisateur>> getUtilisateurs() {
 
         return ResponseEntity.ok(utilisateurDao.findAll());
     }
 
     @DeleteMapping("/admin/utilisateur/{id}")
-    public ResponseEntity<Integer> deleteUtilisateur (@PathVariable int id) {
+    public ResponseEntity<Integer> deleteUtilisateur(@PathVariable int id) {
 
-        if(utilisateurDao.existsById(id)) {
+        if (utilisateurDao.existsById(id)) {
             utilisateurDao.deleteById(id);
             return ResponseEntity.ok(id);
         } else {
             return ResponseEntity.noContent().build();
         }
+    }
+
+    @ResponseBody
+    @GetMapping(value = "/test/image-resource")
+    public ResponseEntity<byte[]> getImageAsResource() {
+
+        try {
+            URL url = new URL("file:///C:/Users/fbansept/Documents/cours/java/spring/projets/demo de cours/bloc note/back/image_storage/profil.jpg");
+            InputStream inputStream = url.openStream();
+            HttpHeaders headers = new HttpHeaders();
+            byte[] media = IOUtils.toByteArray(inputStream);
+            headers.setCacheControl(CacheControl.noCache().getHeaderValue());
+            headers.setContentType(MediaType.IMAGE_JPEG);
+
+            return new ResponseEntity<>(media, headers, HttpStatus.OK);
+
+        } catch (IOException e) {
+            e.printStackTrace();
+            return ResponseEntity.notFound().build();
+        }
+    }
+
+
+    @PostMapping(value = "/test/image-upload")
+    @ResponseBody
+    public ResponseEntity<String> saveBase64(@RequestBody String base64Str) {
+        StringBuffer fileName = new StringBuffer();
+        fileName.append(UUID.randomUUID().toString().replaceAll("-", ""));
+        if (base64Str.equals("")) {
+            return ResponseEntity.badRequest().body("L'image est vide");
+        } else if (base64Str.contains("data:image/png;")) {
+            base64Str = base64Str.replace("data:image/png;base64,", "");
+            fileName.append(".png");
+        } else if (base64Str.contains("data:image/jpeg;")) {
+            base64Str = base64Str.replace("data:image/jpeg;base64,", "");
+            fileName.append(".jpeg");
+        } else {
+            return ResponseEntity.badRequest().body("L'image doit être au format jpg ou png");
+        }
+
+        File file = new File("", fileName.toString());
+        byte[] fileBytes = Base64.getUrlDecoder().decode(base64Str);
+        try {
+            imageService.uploadToLocalFileSystem(file, fileBytes);
+        } catch (IOException e) {
+            e.printStackTrace();
+            return ResponseEntity.badRequest().body("Sauvegarde échouée");
+        }
+
+
+        return ResponseEntity.ok().body("Sauvegarde réussie");
     }
 }
 
