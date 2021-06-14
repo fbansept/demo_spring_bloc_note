@@ -7,25 +7,18 @@ import edu.fbansept.demospringblocnote.model.Utilisateur;
 import edu.fbansept.demospringblocnote.security.JwtUtil;
 import edu.fbansept.demospringblocnote.security.UserDetailsCustom;
 import edu.fbansept.demospringblocnote.security.UserDetailsServiceCustom;
-import edu.fbansept.demospringblocnote.utils.ImageService;
+import edu.fbansept.demospringblocnote.utils.FichierService;
 import edu.fbansept.demospringblocnote.view.VueUtilisateur;
-import org.apache.commons.io.IOUtils;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.http.*;
+import org.springframework.http.ResponseEntity;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.AuthenticationException;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.web.bind.annotation.*;
 
-import java.io.File;
-import java.io.IOException;
-import java.io.InputStream;
-import java.net.URL;
-import java.util.Base64;
 import java.util.List;
 import java.util.Optional;
-import java.util.UUID;
 
 @RestController
 @CrossOrigin
@@ -36,7 +29,7 @@ public class UtilisateurController {
     private AuthenticationManager authenticationManager;
     private UserDetailsServiceCustom userDetailsServiceCustom;
     private PasswordEncoder passwordEncoder;
-    private ImageService imageService;
+    private FichierService fichierService;
 
     @Autowired
     UtilisateurController(
@@ -45,14 +38,14 @@ public class UtilisateurController {
             AuthenticationManager authenticationManager,
             UserDetailsServiceCustom userDetailsServiceCustom,
             PasswordEncoder passwordEncoder,
-            ImageService imageService
+            FichierService fichierService
     ) {
         this.utilisateurDao = utilisateurDao;
         this.jwtUtil = jwtUtil;
         this.authenticationManager = authenticationManager;
         this.userDetailsServiceCustom = userDetailsServiceCustom;
         this.passwordEncoder = passwordEncoder;
-        this.imageService = imageService;
+        this.fichierService = fichierService;
     }
 
     @PostMapping("/authentification")
@@ -160,57 +153,6 @@ public class UtilisateurController {
         } else {
             return ResponseEntity.noContent().build();
         }
-    }
-
-    @ResponseBody
-    @GetMapping(value = "/test/image-resource")
-    public ResponseEntity<byte[]> getImageAsResource() {
-
-        try {
-            URL url = new URL("file:///C:/Users/fbansept/Documents/cours/java/spring/projets/demo de cours/bloc note/back/image_storage/profil.jpg");
-            InputStream inputStream = url.openStream();
-            HttpHeaders headers = new HttpHeaders();
-            byte[] media = IOUtils.toByteArray(inputStream);
-            headers.setCacheControl(CacheControl.noCache().getHeaderValue());
-            headers.setContentType(MediaType.IMAGE_JPEG);
-
-            return new ResponseEntity<>(media, headers, HttpStatus.OK);
-
-        } catch (IOException e) {
-            e.printStackTrace();
-            return ResponseEntity.notFound().build();
-        }
-    }
-
-
-    @PostMapping(value = "/test/image-upload")
-    @ResponseBody
-    public ResponseEntity<String> saveBase64(@RequestBody String base64Str) {
-        StringBuffer fileName = new StringBuffer();
-        fileName.append(UUID.randomUUID().toString().replaceAll("-", ""));
-        if (base64Str.equals("")) {
-            return ResponseEntity.badRequest().body("L'image est vide");
-        } else if (base64Str.contains("data:image/png;")) {
-            base64Str = base64Str.replace("data:image/png;base64,", "");
-            fileName.append(".png");
-        } else if (base64Str.contains("data:image/jpeg;")) {
-            base64Str = base64Str.replace("data:image/jpeg;base64,", "");
-            fileName.append(".jpeg");
-        } else {
-            return ResponseEntity.badRequest().body("L'image doit être au format jpg ou png");
-        }
-
-        File file = new File("", fileName.toString());
-        byte[] fileBytes = Base64.getUrlDecoder().decode(base64Str);
-        try {
-            imageService.uploadToLocalFileSystem(file, fileBytes);
-        } catch (IOException e) {
-            e.printStackTrace();
-            return ResponseEntity.badRequest().body("Sauvegarde échouée");
-        }
-
-
-        return ResponseEntity.ok().body("Sauvegarde réussie");
     }
 }
 

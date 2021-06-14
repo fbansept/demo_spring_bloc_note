@@ -69,6 +69,42 @@
 			<version>2.9.0</version>
 		</dependency>
 
+		<!-- noter le type "pom" de la dépendance -->
+		<!-- itext sépare ses dépendances en plusieurs modules autre pom selon les besoins-->
+		<dependency>
+			<groupId>com.itextpdf</groupId>
+			<artifactId>itext7-core</artifactId>
+			<version>7.1.15</version>
+			<type>pom</type>
+		</dependency>
+
+		<!-- kernel et io pour changer la police -->
+
+		<dependency>
+			<groupId>com.itextpdf</groupId>
+			<artifactId>kernel</artifactId>
+			<version>7.1.15</version>
+		</dependency>
+
+		<dependency>
+			<groupId>com.itextpdf</groupId>
+			<artifactId>io</artifactId>
+			<version>7.1.15</version>
+		</dependency>
+
+		<dependency>
+			<groupId>com.itextpdf</groupId>
+			<artifactId>layout</artifactId>
+			<version>7.1.15</version>
+		</dependency>
+
+		<dependency>
+			<groupId>org.jfree</groupId>
+			<artifactId>jfreechart</artifactId>
+			<version>1.5.3</version>
+		</dependency>
+
+
 	</dependencies>
 
 	<build>
@@ -94,6 +130,14 @@
 				<groupId>org.apache.maven.plugins</groupId>
 				<artifactId>maven-resources-plugin</artifactId>
 				<version>3.1.0</version>
+
+				<!-- OBLIGATOIRE QUAND UNE POLICE EST AJOUTEE AUX RESOURCES -->
+				<configuration>
+					<encoding>UTF-8</encoding>
+					<nonFilteredFileExtensions>
+						<nonFilteredFileExtension>ttf</nonFilteredFileExtension>
+					</nonFilteredFileExtensions>
+				</configuration>
 			</plugin>
 		</plugins>
 	</build>
@@ -129,6 +173,8 @@
 				<database_ddl_initialization>true</database_ddl_initialization>
 				<database_ddl_initialization_mode>create</database_ddl_initialization_mode>
 				<jpa_show_sql>true</jpa_show_sql>
+				<dossier.upload>C://upload-spring</dossier.upload>
+
 			</properties>
 		</profile>
 
@@ -177,6 +223,7 @@
 				<database_ddl_initialization>false</database_ddl_initialization>
 				<database_ddl_initialization_mode>none</database_ddl_initialization_mode>
 				<jpa_show_sql>false</jpa_show_sql>
+				<dossier.upload>\tmp\upload-spring</dossier.upload>
 			</properties>
 		</profile>
 
