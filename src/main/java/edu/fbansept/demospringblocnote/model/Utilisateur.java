@@ -36,7 +36,7 @@ public class Utilisateur {
     @OneToMany(mappedBy = "editeur")
     private List<Note> listeNote;
 
-    @ManyToMany
+    @ManyToMany(fetch = FetchType.EAGER)
     @JsonView({VueUtilisateur.Standard.class})
     @JoinTable(
             name = "utilisateur_role",
